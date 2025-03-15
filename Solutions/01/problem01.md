@@ -50,9 +50,44 @@ To find the total distance between the left list and the right list, add up the 
 
 Your actual left and right lists contain many location IDs. What is the total distance between your lists?
 
+### Part 2
+
+Your analysis only confirmed what everyone feared: the two lists of location IDs are indeed very different.
+
+Or are they?
+
+The Historians can't agree on which group made the mistakes or how to read most of the Chief's handwriting, but in the commotion you notice an interesting detail: a lot of location IDs appear in both lists! Maybe the other numbers aren't location IDs at all but rather misinterpreted handwriting.
+
+This time, you'll need to figure out exactly how often each number from the left list appears in the right list. Calculate a total similarity score by adding up each number in the left list after multiplying it by the number of times that number appears in the right list.
+
+Here are the same example lists again:
+
+```
+3   4
+4   3
+2   5
+1   3
+3   9
+3   3
+```
+
+For these example lists, here is the process of finding the similarity score:
+
+The first number in the left list is 3. It appears in the right list three times, so the similarity score increases by 3 *3 = 9.
+The second number in the left list is 4. It appears in the right list once, so the similarity score increases by 4* 1 = 4.
+The third number in the left list is 2. It does not appear in the right list, so the similarity score does not increase (2 * 0 = 0).
+The fourth number, 1, also does not appear in the right list.
+The fifth number, 3, appears in the right list three times; the similarity score increases by 9.
+The last number, 3, appears in the right list three times; the similarity score again increases by 9.
+So, for these example lists, the similarity score at the end of this process is 31 (9 + 4 + 0 + 0 + 9 + 9).
+
+Once again consider your left and right lists. What is their similarity score?
+
 ---
 
 ## Solution
+
+### Part 1
 
 So this question is asking to compare the smallest values in one list to the smallest values in another list and return a total distance which is the sum of all distances in the list.
 
@@ -103,3 +138,55 @@ public class ListDistance {
 ```
 
 Total distance is: 1590491
+
+### Part 2
+
+In this problem we must find the simliarity score between the list which is calculated by getting the frequencys of each number in list 2 and multiplying the value in list 1 times is frequency.
+
+To do this I created a HashMap that counts the frequency of each value in list2.
+
+I then added to the similarity score the current number times it's frequency in list2.
+
+Below is my java code:
+
+```java
+public class ListSimilarity {
+
+  public static void main(String[] args) throws FileNotFoundException {
+    File file = new File("./input.txt");
+    ArrayList<Integer> list1 = new ArrayList<>();
+    ArrayList<Integer> list2 = new ArrayList<>();
+    HashMap<Integer, Integer> freq = new HashMap<>();
+
+    // Create the two lists from input file
+    try (Scanner in = new Scanner(file)) {
+      while (in.hasNextLine()) {
+        String line = in.nextLine();
+        String[] stringNums = line.split("   ");
+        int num1 = Integer.parseInt(stringNums[0]);
+        int num2 = Integer.parseInt(stringNums[1]);
+
+        list1.add(num1);
+        list2.add(num2);
+      }
+
+      // get the frequency of each element from list 2
+      for (int num : list2) {
+        freq.put(num, 1 + freq.getOrDefault(num, 0));
+      }
+      
+      int similarity = 0;
+
+      // get the similarity between list1 and list2
+      for (int i = 0; i < list1.size(); i++) {
+        int val1 = list1.get(i);
+        similarity += val1 * freq.getOrDefault(val1, 0);
+      }
+
+      System.out.println("The similarity is: " + similarity);
+    }
+  }
+}
+```
+
+The similarity is: 22588371
